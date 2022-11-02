@@ -34,6 +34,8 @@ app.use("/v1/auth", authRoute);
 
 app.use("/v1/user", userRoute);
 
+app.use("/v1/category", categoryRoute);
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
