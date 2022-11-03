@@ -5,7 +5,6 @@ const productSchema = new mongoose.Schema(
     title: {
       type: "string",
       required: true,
-      minlength: 1,
     },
     thumbnail: {
       type: "array",
@@ -18,7 +17,6 @@ const productSchema = new mongoose.Schema(
     quantityInWarehouse: {
       type: "number",
       required: true,
-      minlength: 1,
     },
     quantitySold: {
       type: "number",
