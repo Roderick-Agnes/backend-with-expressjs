@@ -42,19 +42,17 @@ const productSchema = new mongoose.Schema(
     },
     inputDay: {
       type: "date",
-      default: 0,
+      default: Date.now(),
     },
     isNew: {
       type: "boolean",
       default: Date.now() - inputDay <= 7 ? true : false,
     },
     information: {
-      type: "array",
-      maxlenght: 2550,
+      type: "object",
     },
     description: {
       type: "object",
-      maxlenght: 2550,
     },
   },
   {

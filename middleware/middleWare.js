@@ -19,9 +19,18 @@ const middleWare = {
     }
   },
 
-  verifyTokenAndAdminAuth: (req, res, next) => {
+  verifyTokenAndAuthorization: (req, res, next) => {
     middleWare.verifyToken(req, res, () => {
-      if (req.user.isAdmin || req.user.id === req.params.id) {
+      if (req.user.id === req.params.id || req.user.isAdmin) {
+        next();
+      } else {
+        return res.status(403).json({ message: "You're not allowed to do that!" });
+      }
+    });
+  },
+  verifyTokenAndAdmin: (req, res, next) => {
+    middleWare.verifyToken(req, res, () => {
+      if (req.user.isAdmin) {
         next();
       } else {
         return res

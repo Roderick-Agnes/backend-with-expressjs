@@ -6,6 +6,10 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import authRoute from "./routers/auth.js";
 import userRoute from "./routers/user.js";
+import categoryRoute from "./routers/category.js";
+import productRoute from "./routers/product.js";
+import cartRoute from "./routers/cart.js";
+import orderRoute from "./routers/order.js";
 
 dotenv.config();
 const app = express();
@@ -30,12 +34,19 @@ mongoose
   });
 
 // ROUTES
-app.use("/v1/auth", authRoute);
+app.use("/api/auth", authRoute);
 
-app.use("/v1/user", userRoute);
+app.use("/api/users", userRoute);
 
-app.use("/v1/category", categoryRoute);
+app.use("/api/categories", categoryRoute);
 
+app.use("/api/products", productRoute);
+
+app.use("/api/carts", cartRoute);
+
+app.use("/api/orders", orderRoute);
+
+// APP RUNNING
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
