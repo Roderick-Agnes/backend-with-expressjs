@@ -44,6 +44,7 @@ const authController = {
 
       if (user && validPassword) {
         // use jsonwebtoken in here
+
         const accessToken = await generateAccessToken(user);
         const refreshToken = await generateRefreshToken(user);
 

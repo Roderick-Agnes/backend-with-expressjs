@@ -29,8 +29,8 @@ const productController = {
       // Create new product
       const newProduct = new Product({
         title: req.body.title,
-        thumbnail: req.body.thumbnail,
-        categoryId: req.body.categoryId,
+        thumbnails: req.body.thumbnails,
+        categories: req.body.categories,
         quantityInWarehouse: req.body.quantityInWarehouse,
         rootPrice: req.body.rootPrice || 0,
         information: req.body.information || "No information available",
@@ -55,7 +55,7 @@ const productController = {
           $set: {
             title: req.body.title,
             thumbnail: req.body.thumbnail,
-            categoryId: req.body.categoryId,
+            categories: req.body.categories,
             quantityInWarehouse: req.body.quantityInWarehouse,
             rootPrice: req.body.rootPrice || 0,
             information: req.body.information || "No information available",

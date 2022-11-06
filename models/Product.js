@@ -2,27 +2,31 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
+    id: {
+      type: "string",
+      default: Date.now(),
+      unique: true,
+    },
     title: {
       type: "string",
-      required: true,
     },
-    thumbnail: {
+    thumbnails: {
       type: "array",
       default: [],
     },
-    categories: {
+    category: {
+      type: "string",
+      required: true,
+    },
+    brand_name: {
       type: "array",
       required: true,
     },
     quantityInWarehouse: {
       type: "number",
-      required: true,
+      default: 100,
     },
     quantitySold: {
-      type: "number",
-      default: 0,
-    },
-    rate: {
       type: "number",
       default: 0,
     },
@@ -34,6 +38,11 @@ const productSchema = new mongoose.Schema(
       type: "number",
       default: 0,
     },
+    discount: {
+      // = rootPrice - salePrice
+      type: "number",
+      default: 0,
+    },
     salePrice: {
       type: "number",
       default: 0,
@@ -42,15 +51,25 @@ const productSchema = new mongoose.Schema(
       type: "date",
       default: Date.now(),
     },
-    isNew: {
-      type: "boolean",
-      default: Date.now() - inputDay <= 7 ? true : false,
-    },
     information: {
       type: "object",
+      default: { data: "No information available" },
     },
     description: {
       type: "object",
+      default: { data: "No description available" },
+    },
+    shortDescription: {
+      type: "object",
+      default: { data: "No short description available" },
+    },
+    rating_average: {
+      type: "number",
+      default: 0,
+    },
+    review_count: {
+      type: "number",
+      default: 0,
     },
   },
   {
