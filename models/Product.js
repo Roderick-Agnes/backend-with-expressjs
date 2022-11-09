@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema(
     },
     quantityInWarehouse: {
       type: "number",
-      default: 100,
+      default: 300,
     },
     quantitySold: {
       type: "number",
@@ -46,6 +46,10 @@ const productSchema = new mongoose.Schema(
     salePrice: {
       type: "number",
       default: 0,
+    },
+    freeShip: {
+      type: "boolean",
+      default: false,
     },
     inputDay: {
       type: "date",

@@ -19,12 +19,14 @@ const authController = {
         password: hashed,
       });
 
-      // Save to database
+      // Save to database after 5s
       const user = await newUser.save();
-
-      return res.status(200).json(user);
+      const { isAdmin, password, ...filterInfo } = user._doc;
+      setTimeout(async () => {
+        return res.status(200).json(filterInfo);
+      }, 5000);
     } catch (error) {
-      console.log("create new user failed");
+      console.log(error);
       return res.status(500).json(error);
     }
   },
@@ -34,12 +36,12 @@ const authController = {
       const user = await User.findOne({ username: req.body.username });
 
       if (!user) {
-        return res.status(200).json({ message: "Wrong username!" });
+        return res.status(401).json({ message: "Wrong username!" });
       }
       const validPassword = await bcrypt.compare(req.body.password, user.password);
 
       if (!validPassword) {
-        return res.status(404).json({ message: "Wrong password!" });
+        return res.status(401).json({ message: "Wrong password!" });
       }
 
       if (user && validPassword) {
@@ -57,7 +59,9 @@ const authController = {
         });
 
         const { password, ...orders } = user._doc;
-        return res.status(200).json({ ...orders, accessToken });
+        setTimeout(async () => {
+          return res.status(200).json({ ...orders, accessToken });
+        }, 2000);
       }
     } catch (error) {
       console.log("create new user failed");

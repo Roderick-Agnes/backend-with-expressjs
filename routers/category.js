@@ -5,11 +5,7 @@ import categoryController from "../controllers/categoryController.js";
 const router = express.Router();
 
 // GET ALL CATEGORIES
-router.get(
-  "/",
-  middleWare.verifyTokenAndAuthorization,
-  categoryController.getAllCategories
-);
+router.get("/", categoryController.getAllCategories);
 
 // CREATE NEW CATEGORY
 router.post("/", middleWare.verifyTokenAndAdmin, categoryController.addCategory);

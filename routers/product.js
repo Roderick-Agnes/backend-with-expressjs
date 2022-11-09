@@ -5,7 +5,7 @@ import productController from "../controllers/productController.js";
 const router = express.Router();
 
 // GET ALL PRODUCTS
-router.get("/", middleWare.verifyTokenAndAuthorization, productController.getAllProducts);
+router.get("/", productController.getAllProducts);
 
 // CREATE NEW CATEGORY
 router.post("/", middleWare.verifyTokenAndAdmin, productController.addProduct);

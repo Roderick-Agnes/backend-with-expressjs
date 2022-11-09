@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import authRoute from "./routers/auth.js";
 import userRoute from "./routers/user.js";
 import categoryRoute from "./routers/category.js";
+import collectionRoute from "./routers/collection.js";
 import productRoute from "./routers/product.js";
 import cartRoute from "./routers/cart.js";
 import orderRoute from "./routers/order.js";
@@ -15,7 +16,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: (_, callback) => callback(null, true),
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
@@ -39,6 +47,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 
 app.use("/api/categories", categoryRoute);
+
+app.use("/api/collections", collectionRoute);
 
 app.use("/api/products", productRoute);
 
