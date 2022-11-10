@@ -2,36 +2,41 @@ import Product from "../models/Product.js";
 const date = new Date();
 const productController = {
   // GET NEW PRODUCTS
-  getNewProducts: async (size) => {
+  getNewProducts: async (start, size) => {
     const products = await Product.find({
       inputDay: {
         $lt: new Date(),
         $gte: new Date(new Date().setDate(new Date().getDate() - 7)), // check product was created 7 days ago
       },
-    }).limit(size);
+    })
+      .limit(size)
+      .skip(start);
     return products;
   },
   // GET CHEAP PRODUCTS
-  getCheapProducts: async (size) => {
+  getCheapProducts: async (start, size) => {
+    //[{ $skip: start }],
     const products = await Product.find({
       $or: [{ salePrice: { $lte: 100000 } }, { rootPrice: { $lte: 100000 } }],
     })
       .limit(size)
+      .skip(start)
       .sort({ inputDay: -1 });
     return products;
   },
   // GET HOT DEALS
-  getHotDeals: async (size) => {
+  getHotDeals: async (start, size) => {
     const products = await Product.find({
       quantitySold: { $gt: 100 },
     })
       .limit(size)
+      .skip(start)
       .sort({ inputDay: -1 });
     return products;
   },
   // GET RANDOM LIST PRODUCTS
-  getRandomProducts: async (size) => {
-    const products = await Product.find().limit(size).sort({ inputDay: -1 });
+  getRandomProducts: async (start, size) => {
+    const products = await Product.find().limit(size).skip(start).sort({ inputDay: -1 });
     return products;
   },
   // GET ALL PRODUCTS

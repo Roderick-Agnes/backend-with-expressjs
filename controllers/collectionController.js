@@ -3,24 +3,66 @@ import Product from "../models/Product.js";
 import productController from "./productController.js";
 
 const collectionController = {
+  // GET COLLECTIONS BY ID
+  getCollectionById: async (req, res) => {
+    const start = req.query?._start || 0;
+    const limit = req.query?._limit || 30;
+    const id = req.params?.id;
+    console.log(id);
+    const collection = await Collection.findById(id);
+    if (!collection)
+      return res.status(404).json({ message: `Not found collection with id: ${id}` });
+
+    let products;
+    if (collection.title === "Dành cho bạn") {
+      products = await productController.getRandomProducts(start, limit);
+    }
+    if (collection.title === "Deal siêu hot") {
+      products = await productController.getHotDeals(start, limit);
+    }
+    if (collection.title === "Rẻ vô đối") {
+      products = await productController.getCheapProducts(start, limit);
+    }
+    if (collection.title === "Hàng mới") {
+      products = await productController.getNewProducts(start, limit);
+    }
+    collection.products = []; // RESET PRODUCT LIST
+    collection.products = products;
+
+    // COUNTER TOTAL PRODUCTS IN THIS COLLECTION
+    // const count = await Collection.count();
+    const pagination = {
+      _page: start / limit + 1,
+      _limit: limit,
+      _total: 90,
+    };
+    return res.status(200).json({ data: collection, pagination });
+  },
   // GET ALL COLLECTIONS
   getAllCollections: async (req, res) => {
     try {
-      const collections = await Collection.find();
+      const start = req.params?._start || 0;
+      const limit = req.params?._limit || 30;
+      const collectionLimit = req.params?._collectionLimit || 8;
+
+      const collections = await Collection.find().limit(collectionLimit);
+
       if (!collections) {
         return res.status(404).json({ message: "No collections found" });
       }
-      const productsForYou = await productController.getRandomProducts(30);
-      const hotDeals = await productController.getHotDeals(30);
-      const cheapProducts = await productController.getCheapProducts(30);
-      const newProducts = await productController.getNewProducts(30);
+      const productsForYou = await productController.getRandomProducts(start, limit);
+
+      const hotDeals = await productController.getHotDeals(start, limit);
+
+      const cheapProducts = await productController.getCheapProducts(start, limit);
+
+      const newProducts = await productController.getNewProducts(start, limit);
 
       // PUSH PRODUCTS TO COLLECTION
       collections.map((item) => {
         if (item.title === "Dành cho bạn") {
           item.products = [];
           item.products = productsForYou;
-          // && item.products.splice(0, item.products.length);
         }
         if (item.title === "Deal siêu hot") {
           item.products = [];
@@ -37,8 +79,13 @@ const collectionController = {
 
         return item;
       });
-      console.log("newArr: ", collections[0].products);
-      return res.status(200).json(collections);
+      const pagination = {
+        _page: start / limit + 1,
+        _limit: limit,
+        _total: 90,
+      };
+
+      return res.status(200).json({ data: collections, pagination });
     } catch (error) {
       return res.status(500).json(error);
     }

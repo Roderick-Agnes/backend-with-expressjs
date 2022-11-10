@@ -7,6 +7,9 @@ const router = express.Router();
 // GET ALL COLLECTIONS
 router.get("/", collectionController.getAllCollections);
 
+// GET COLLECTION BY ID
+router.get("/:id", collectionController.getCollectionById);
+
 // CREATE NEW COLLECTION
 router.post("/", middleWare.verifyTokenAndAdmin, collectionController.addCollection);
 
