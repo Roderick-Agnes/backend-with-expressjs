@@ -4,7 +4,6 @@ const productSchema = new mongoose.Schema(
   {
     id: {
       type: "string",
-      default: Date.now(),
       unique: true,
     },
     title: {
@@ -15,7 +14,7 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
     category: {
-      type: "string",
+      type: "object",
       required: true,
     },
     brand_name: {
@@ -24,11 +23,11 @@ const productSchema = new mongoose.Schema(
     },
     quantityInWarehouse: {
       type: "number",
-      default: 300,
+      default: 1000,
     },
     quantitySold: {
-      type: "number",
-      default: 0,
+      type: "object",
+      default: {},
     },
     rootPrice: {
       type: "number",
@@ -47,25 +46,21 @@ const productSchema = new mongoose.Schema(
       type: "number",
       default: 0,
     },
-    freeShip: {
-      type: "boolean",
-      default: false,
-    },
     inputDay: {
       type: "date",
       default: Date.now(),
     },
     information: {
-      type: "object",
-      default: { data: "No information available" },
+      type: "string",
+      default: "No information available",
     },
     description: {
-      type: "object",
-      default: { data: "No description available" },
+      type: "string",
+      default: "No description available",
     },
     shortDescription: {
-      type: "object",
-      default: { data: "No short description available" },
+      type: "string",
+      default: "No short description available",
     },
     rating_average: {
       type: "number",

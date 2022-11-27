@@ -27,7 +27,7 @@ const productController = {
   // GET HOT DEALS
   getHotDeals: async (start, size) => {
     const products = await Product.find({
-      quantitySold: { $gt: 100 },
+      "quantitySold.value": { $gt: 100 },
     })
       .limit(size)
       .skip(start)
@@ -92,8 +92,8 @@ const productController = {
         {
           $set: {
             title: req.body.title,
-            thumbnail: req.body.thumbnail,
-            categories: req.body.categories,
+            thumbnails: req.body.thumbnails,
+            category: req.body.category,
             quantityInWarehouse: req.body.quantityInWarehouse,
             rootPrice: req.body.rootPrice || 0,
             information: req.body.information || "No information available",
