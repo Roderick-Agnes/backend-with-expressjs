@@ -16,14 +16,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(
-  cors({
-    credentials: true,
-    origin: (_, callback) => callback(null, true),
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    optionsSuccessStatus: 200,
-  })
-);
+// {
+//   credentials: true,
+//   origin: (_, callback) => callback(null, true),
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//   optionsSuccessStatus: 200,
+// }
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
