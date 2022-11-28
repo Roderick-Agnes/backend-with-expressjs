@@ -61,6 +61,7 @@ const productController = {
   // GET PRODUCT BY ID
   getProductById: async (id) => {
     const product = await Product.findOne({id: id});
+    console.log(product)
     return product;
   },
 
