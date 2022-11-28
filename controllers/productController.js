@@ -61,8 +61,9 @@ const productController = {
   // GET PRODUCT BY ID
   getProductById: async (id) => {
     const product = await Product.findOne({id: id});
-    console.log(product)
-    return product;
+    if(!product) return res.status(400).json(
+      {"status": "400", "message":"Not found product with id: " + id,"data":{}});
+    return res.status(200).json({"status": "200", "message":"Success","data":product});
   },
 
   // CREATE NEW PRODUCT
