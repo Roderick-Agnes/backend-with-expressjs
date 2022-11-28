@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", productController.getAllProducts);
 
 // GET PRODUCT BY ID
-router.get("/:id", productController.getProductById)
+router.get("/find/:id", productController.getProductById)
 
 // CREATE NEW CATEGORY
 router.post("/", middleWare.verifyTokenAndAdmin, productController.addProduct);
