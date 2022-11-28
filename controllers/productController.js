@@ -4,13 +4,14 @@ const productController = {
   // GET NEW PRODUCTS
   getNewProducts: async (start, size) => {
     const products = await Product.find({
-      inputDay: {
+      createdAt: {
         $lt: new Date(),
         $gte: new Date(new Date().setDate(new Date().getDate() - 7)), // check product was created 7 days ago
       },
     })
       .limit(size)
       .skip(start);
+    console.log(products);
     return products;
   },
   // GET CHEAP PRODUCTS
@@ -21,7 +22,7 @@ const productController = {
     })
       .limit(size)
       .skip(start)
-      .sort({ inputDay: -1 });
+      .sort({ createdAt: -1 });
     return products;
   },
   // GET HOT DEALS
@@ -31,12 +32,12 @@ const productController = {
     })
       .limit(size)
       .skip(start)
-      .sort({ inputDay: -1 });
+      .sort({ createdAt: -1 });
     return products;
   },
   // GET RANDOM LIST PRODUCTS
   getRandomProducts: async (start, size) => {
-    const products = await Product.find().limit(size).skip(start).sort({ inputDay: -1 });
+    const products = await Product.find().limit(size).skip(start).sort({ createdAt: -1 });
     return products;
   },
   // GET ALL PRODUCTS

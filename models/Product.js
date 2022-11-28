@@ -46,10 +46,6 @@ const productSchema = new mongoose.Schema(
       type: "number",
       default: 0,
     },
-    inputDay: {
-      type: "date",
-      default: Date.now(),
-    },
     information: {
       type: "string",
       default: "No information available",
