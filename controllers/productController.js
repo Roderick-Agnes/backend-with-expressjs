@@ -58,6 +58,12 @@ const productController = {
     }
   },
 
+  // GET PRODUCT BY ID
+  getProductById: async (id) => {
+    const product = await Product.findOne({id: id});
+    return product;
+  },
+
   // CREATE NEW PRODUCT
   addProduct: async (req, res) => {
     try {
