@@ -11,7 +11,7 @@ const productController = {
     })
       .limit(size)
       .skip(start);
-    console.log(products);
+    // console.log(products);
     return products;
   },
   // GET CHEAP PRODUCTS
@@ -59,11 +59,17 @@ const productController = {
   },
 
   // GET PRODUCT BY ID
-  getProductById: async (id) => {
-    const product = await Product.findOne({id: id});
-    if(!product) return res.status(400).json(
-      {"status": "400", "message":"Not found product with id: " + id,"data":{}});
-    return res.status(200).json({"status": "200", "message":"Success","data":product});
+  getProductById: async (req, res) => {
+    const product = await Product.findOne({ id: req.params.id });
+    if (!product)
+      return res
+        .status(400)
+        .json({
+          status: "400",
+          message: "Not found product with id: " + req.params.id,
+          data: {},
+        });
+    return res.status(200).json({ status: "200", message: "Success", data: product });
   },
 
   // CREATE NEW PRODUCT
