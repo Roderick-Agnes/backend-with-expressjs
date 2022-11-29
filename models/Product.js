@@ -47,7 +47,7 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     information: {
-      type: "string",
+      type: "array",
       default: "No information available",
     },
     description: {

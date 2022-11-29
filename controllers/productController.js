@@ -62,13 +62,11 @@ const productController = {
   getProductById: async (req, res) => {
     const product = await Product.findOne({ id: req.params.id });
     if (!product)
-      return res
-        .status(400)
-        .json({
-          status: "400",
-          message: "Not found product with id: " + req.params.id,
-          data: {},
-        });
+      return res.status(400).json({
+        status: "400",
+        message: "Not found product with id: " + req.params.id,
+        data: {},
+      });
     return res.status(200).json({ status: "200", message: "Success", data: product });
   },
 
