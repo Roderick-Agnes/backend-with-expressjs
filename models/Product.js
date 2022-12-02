@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
     category: {
-      type: "object",
+      type: "string",
       required: true,
     },
     brand_name: {

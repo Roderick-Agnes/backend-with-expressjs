@@ -1,3 +1,4 @@
+import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 const date = new Date();
 const productController = {
@@ -43,7 +44,6 @@ const productController = {
   // GET ALL PRODUCTS
   getAllProducts: async (req, res) => {
     const _limit = req.query._limit;
-    // const _sort = req.query._sort; // boolean: true if ascending, false if descending
 
     try {
       const products = _limit
@@ -60,7 +60,17 @@ const productController = {
 
   // GET PRODUCT BY ID
   getProductById: async (req, res) => {
-    const product = await Product.findOne({ id: req.params.id });
+    const product = await Product.aggregate([
+      { $match: { id: req.params.id } },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "id",
+          as: "category",
+        },
+      },
+    ]);
     if (!product)
       return res.status(400).json({
         status: "400",
@@ -68,6 +78,38 @@ const productController = {
         data: {},
       });
     return res.status(200).json({ status: "200", message: "Success", data: product });
+  },
+
+  // GET PRODUCTS BY CATEGORY ID
+  getProductsByCategoryId: async (req, res) => {
+    const start = parseInt(req.query?._start) || 0;
+    const limit = parseInt(req.query?._limit) || 40;
+    const categoryId = req.params?.id;
+
+    console.log(typeof start);
+
+    try {
+      const products = await Category.aggregate([
+        { $match: { id: categoryId } },
+        {
+          $lookup: {
+            from: "products",
+            localField: "id",
+            foreignField: "category",
+            as: "products",
+            pipeline: [{ $sort: { createdAt: -1 } }, { $skip: start }, { $limit: limit }],
+          },
+        },
+      ]);
+      if (!products) {
+        return res
+          .status(400)
+          .json({ status: "400", message: "No products found", data: [] });
+      }
+      return res.status(200).json({ status: "200", message: "Success", data: products });
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   },
 
   // CREATE NEW PRODUCT
