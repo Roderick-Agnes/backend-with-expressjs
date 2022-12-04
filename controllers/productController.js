@@ -84,10 +84,9 @@ const productController = {
   getProductsByCategoryId: async (req, res) => {
     const start = parseInt(req.query?._start) || 0;
     const limit = parseInt(req.query?._limit) || 40;
+    const page = req.query?._page || 1;
     const categoryId = req.params?.id;
-
-    console.log(typeof start);
-
+    console.log(page);
     try {
       const products = await Category.aggregate([
         { $match: { id: categoryId } },
@@ -101,12 +100,26 @@ const productController = {
           },
         },
       ]);
+      // COUNT PRODUCT BY CATEGORY_ID
+      const productMaxCount = await Product.find({ category: categoryId });
+
       if (!products) {
         return res
           .status(400)
           .json({ status: "400", message: "No products found", data: [] });
       }
-      return res.status(200).json({ status: "200", message: "Success", data: products });
+      return res.status(200).json({
+        status: "200",
+        message: "Success",
+        data: {
+          category: products,
+          pagination: {
+            _page: page,
+            _limit: productMaxCount.length,
+            _max_page: Math.ceil(productMaxCount.length / limit),
+          },
+        },
+      });
     } catch (error) {
       return res.status(500).json(error);
     }
