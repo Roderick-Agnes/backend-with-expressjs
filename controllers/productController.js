@@ -1,5 +1,6 @@
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
+import { filterConstant } from "../utils/filterConstant.js";
 const date = new Date();
 const productController = {
   // GET NEW PRODUCTS
@@ -85,8 +86,12 @@ const productController = {
     const start = parseInt(req.query?._start) || 0;
     const limit = parseInt(req.query?._limit) || 40;
     const page = req.query?._page || 1;
+    const filterCode = req.query?._filterBy;
+    const rating = req.query?._rating;
+    const priceRangeStart = parseInt(req.query?._priceRangeStart);
+    const priceRangeEnd = parseInt(req.query?._priceRangeEnd);
     const categoryId = req.params?.id;
-    console.log(page);
+
     try {
       const products = await Category.aggregate([
         { $match: { id: categoryId } },
@@ -96,12 +101,70 @@ const productController = {
             localField: "id",
             foreignField: "category",
             as: "products",
-            pipeline: [{ $sort: { createdAt: -1 } }, { $skip: start }, { $limit: limit }],
+            pipeline: [
+              {
+                $match: {
+                  rating_average:
+                    rating !== "all"
+                      ? {
+                          $lte: parseInt(rating) + 0.9,
+                          $gte: parseInt(rating),
+                        }
+                      : {
+                          $gte: 0,
+                        },
+                  salePrice:
+                    priceRangeEnd !== 0
+                      ? {
+                          $gte: priceRangeStart || 0,
+                          $lte: priceRangeEnd,
+                        }
+                      : { $gt: 0 },
+                },
+              },
+              {
+                $sort:
+                  (filterCode === filterConstant.hot && {
+                    "quantitySold.value": -1,
+                  }) ||
+                  (filterCode === filterConstant.new && { createdAt: -1 }) ||
+                  (filterCode === filterConstant.asc &&
+                    ({ salePrice: 1 } || {
+                      rootPrice: 1,
+                    })) ||
+                  (filterCode === filterConstant.desc &&
+                    ({ salePrice: -1 } || {
+                      rootPrice: -1,
+                    })),
+              },
+              { $skip: start },
+              { $limit: limit },
+            ],
           },
         },
       ]);
       // COUNT PRODUCT BY CATEGORY_ID
-      const productMaxCount = await Product.find({ category: categoryId });
+      const productMaxCount = await Product.aggregate([
+        {
+          $match: {
+            category: categoryId,
+            rating_average:
+              rating !== "all"
+                ? {
+                    $lte: parseInt(rating) + 0.9,
+                    $gte: parseInt(rating),
+                  }
+                : { $gt: 0 },
+            salePrice:
+              priceRangeEnd !== 0
+                ? {
+                    $gte: priceRangeStart || 0,
+                    $lte: priceRangeEnd,
+                  }
+                : { $gt: 0 },
+          },
+        },
+      ]);
 
       if (!products) {
         return res

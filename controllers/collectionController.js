@@ -41,9 +41,9 @@ const collectionController = {
   // GET ALL COLLECTIONS
   getAllCollections: async (req, res) => {
     try {
-      const start = req.params?._start || 0;
-      const limit = req.params?._limit || 30;
-      const collectionLimit = req.params?._collectionLimit || 8;
+      const start = req.query?._start || 0;
+      const limit = req.query?._limit || 30;
+      const collectionLimit = req.query?._collectionLimit || 8;
 
       const collections = await Collection.find().limit(collectionLimit);
 
