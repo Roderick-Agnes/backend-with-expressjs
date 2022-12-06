@@ -18,7 +18,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     brand_name: {
-      type: "array",
+      type: "string",
       required: true,
     },
     quantityInWarehouse: {

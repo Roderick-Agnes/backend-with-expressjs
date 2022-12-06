@@ -90,9 +90,70 @@ const productController = {
     const rating = req.query?._rating;
     const priceRangeStart = parseInt(req.query?._priceRangeStart);
     const priceRangeEnd = parseInt(req.query?._priceRangeEnd);
+    const brandNames = req.query?._brands;
     const categoryId = req.params?.id;
 
     try {
+      let brands = [];
+
+      // USE THIS CALL WHEN I NEED TO UPADTE PAGES NUMBER
+      const maxPageNum = await Product.aggregate([
+        {
+          $match: {
+            category: categoryId,
+            rating_average:
+              rating !== "all"
+                ? {
+                    $lte: parseInt(rating) + 0.9,
+                    $gte: parseInt(rating),
+                  }
+                : { $gt: 0 },
+            salePrice:
+              priceRangeEnd !== 0
+                ? {
+                    $gte: priceRangeStart || 0,
+                    $lte: priceRangeEnd,
+                  }
+                : { $gt: 0 },
+            brand_name:
+              brandNames && brandNames.length > 0
+                ? {
+                    $in: brandNames,
+                  }
+                : { $nin: ["null"] },
+          },
+        },
+      ]);
+
+      // USE THIS CALL WHEN I NEED TO GET ALL BRAND_NAME
+      const tmpBrandNames = await Product.aggregate([
+        {
+          $match: {
+            category: categoryId,
+            rating_average:
+              rating !== "all"
+                ? {
+                    $lte: parseInt(rating) + 0.9,
+                    $gte: parseInt(rating),
+                  }
+                : { $gt: 0 },
+            salePrice:
+              priceRangeEnd !== 0
+                ? {
+                    $gte: priceRangeStart || 0,
+                    $lte: priceRangeEnd,
+                  }
+                : { $gt: 0 },
+          },
+        },
+      ]);
+
+      // GET ALL BRAND_NAME
+      await tmpBrandNames.map(async (product) => {
+        if (!brands.includes(product.brand_name)) await brands.push(product.brand_name);
+      });
+
+      // GET CATEGORY INFORMATION AND PRODUCTS BY THIS CATEGORY
       const products = await Category.aggregate([
         { $match: { id: categoryId } },
         {
@@ -120,8 +181,15 @@ const productController = {
                           $lte: priceRangeEnd,
                         }
                       : { $gt: 0 },
+                  brand_name:
+                    brandNames && brandNames.length > 0
+                      ? {
+                          $in: brandNames,
+                        }
+                      : { $in: brands },
                 },
               },
+
               {
                 $sort:
                   (filterCode === filterConstant.hot && {
@@ -143,28 +211,6 @@ const productController = {
           },
         },
       ]);
-      // COUNT PRODUCT BY CATEGORY_ID
-      const productMaxCount = await Product.aggregate([
-        {
-          $match: {
-            category: categoryId,
-            rating_average:
-              rating !== "all"
-                ? {
-                    $lte: parseInt(rating) + 0.9,
-                    $gte: parseInt(rating),
-                  }
-                : { $gt: 0 },
-            salePrice:
-              priceRangeEnd !== 0
-                ? {
-                    $gte: priceRangeStart || 0,
-                    $lte: priceRangeEnd,
-                  }
-                : { $gt: 0 },
-          },
-        },
-      ]);
 
       if (!products) {
         return res
@@ -176,10 +222,11 @@ const productController = {
         message: "Success",
         data: {
           category: products,
+          brands,
           pagination: {
             _page: page,
-            _limit: productMaxCount.length,
-            _max_page: Math.ceil(productMaxCount.length / limit),
+            _total_max: maxPageNum.length, // COUNT PRODUCT BY CATEGORY_ID
+            _max_page: Math.ceil(maxPageNum.length / limit),
           },
         },
       });
