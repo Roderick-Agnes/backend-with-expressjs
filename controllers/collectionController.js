@@ -59,7 +59,7 @@ const collectionController = {
       const newProducts = await productController.getNewProducts(start, limit);
 
       // PUSH PRODUCTS TO COLLECTION
-      collections.map((item) => {
+      await collections.map((item) => {
         if (item.title === "Dành cho bạn") {
           item.products = [];
           item.products = productsForYou;
