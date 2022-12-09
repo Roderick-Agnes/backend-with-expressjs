@@ -130,25 +130,11 @@ const productController = {
         {
           $match: {
             category: categoryId,
-            rating_average:
-              rating !== "all"
-                ? {
-                    $lte: parseInt(rating) + 0.9,
-                    $gte: parseInt(rating),
-                  }
-                : { $gt: 0 },
-            salePrice:
-              priceRangeEnd !== 0
-                ? {
-                    $gte: priceRangeStart || 0,
-                    $lte: priceRangeEnd,
-                  }
-                : { $gt: 0 },
           },
         },
       ]);
 
-      // GET ALL BRAND_NAME
+      // PUSH ALL BRAND_NAME TO brands ARRAY
       await tmpBrandNames.map(async (product) => {
         if (!brands.includes(product.brand_name)) await brands.push(product.brand_name);
       });
